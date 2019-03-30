@@ -1,4 +1,4 @@
-module Main exposing (Model, Msg(..), init, inputToRows, main, update, view)
+module Main exposing (Model, Msg(..), init, inputToRows, isValidInput, main, update, view)
 
 import Browser
 import Html exposing (Html, div, h1, table, td, text, textarea, tr)
@@ -90,3 +90,15 @@ inputToRows model =
                 >> List.filter (String.isEmpty >> not)
                 >> List.map String.trim
             )
+
+
+isValidInput : Model -> Bool
+isValidInput model =
+    case List.head (inputToRows model) of
+        Just firstRow ->
+            inputToRows model
+                |> Debug.log "1"
+                |> List.all (\row -> List.length row == List.length firstRow)
+
+        Nothing ->
+            False

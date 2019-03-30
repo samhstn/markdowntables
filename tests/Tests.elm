@@ -1,7 +1,7 @@
 module Tests exposing (all)
 
 import Expect
-import Main exposing (inputToRows)
+import Main exposing (inputToRows, isValidInput)
 import Test exposing (..)
 
 
@@ -33,7 +33,12 @@ tableRows =
 
 all : Test
 all =
-    describe "inputToRows"
+    describe "all" allTests
+
+
+allTests : List Test
+allTests =
+    [ describe "inputToRows"
         [ test basicTableInput <|
             \_ ->
                 Expect.equal
@@ -43,3 +48,26 @@ all =
             \_ ->
                 Expect.equal (inputToRows tableInput) tableRows
         ]
+    , describe "validInput"
+        [ test "basicTableInput without trailing |" <|
+            \_ ->
+                Expect.equal
+                    (isValidInput (String.dropRight 1 basicTableInput))
+                    False
+        , skip <| test "basicTableInput without initial |" <|
+            \_ ->
+                Expect.equal
+                    (isValidInput (String.dropLeft 1 basicTableInput))
+                    False
+        , skip <| test "tableInput without trailing |" <|
+            \_ ->
+                Expect.equal
+                    (isValidInput (String.dropRight 1 tableInput))
+                    False
+        , skip <| test "tableInput without initial |" <|
+            \_ ->
+                Expect.equal
+                    (isValidInput (String.dropLeft 1 tableInput))
+                    False
+        ]
+    ]
