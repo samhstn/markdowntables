@@ -1,0 +1,14 @@
+language: elm
+script:
+  - npm run format:validate
+  - npm test
+after_success:
+  - ./build.sh
+  - git rev-parse HEAD > public/version
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  on:
+    branch: master
+  local_dir: public
