@@ -8,15 +8,12 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && concurrently npm:start:* npm:serve",
+    "start": "elm make src/Main.elm --output src/elm.js && concurrently npm:start:* npm:serve",
     "start:elm": "elm-live src/Main.elm -- --output src/elm.js",
     "start:js": "watchify src/index.js --o public/index.js",
     "serve": "http-server",
-    "build": "npm run build:elm && npm run build:js",
-    "build:elm": "elm make src/Main.elm --output src/elm.js --optimize",
-    "build:js": "browserify src/index.js --o public/index.js",
     "format": "elm-format src tests --yes",
-    "format:validate": "elm-format src --validate",
+    "format:validate": "elm-format src tests --validate",
     "test": "elm-test",
     "test:watch": "npm run test -- --watch"
   },
@@ -28,8 +25,9 @@
   "author": "samhstn",
   "license": "ISC",
   "dependencies": {
+    "browserify": "^16.2.3",
     "elm": "^0.19.0-bugfix6",
-    "browserify": "^16.2.3"
+    "uglify-js": "^3.5.4"
   },
   "devDependencies": {
     "concurrently": "^4.1.0",
