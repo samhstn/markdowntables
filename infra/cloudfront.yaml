@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  CloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: samhstn.github.io
+            Id: S3Origin
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: http-only
+        Enabled: true
+        HttpVersion: http2
+        DefaultRootObject: index.html
+        Aliases:
+          - "{{resolve:ssm:/Samhstn/DomainName:1}}"
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          TargetOriginId: S3Origin
+          ForwardedValues:
+            QueryString: true
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_All
+        ViewerCertificate:
+          AcmCertificateArn: !ImportValue SamhstnAcmCertArn
+          SslSupportMethod: sni-only
+
+Outputs:
+  CloudFrontDomainName:
+    Value: !GetAtt CloudFront.DomainName
+    Export:
+      Name: SamhstnCloudFrontDomainName
