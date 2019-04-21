@@ -1,9 +1,18 @@
-module Main exposing (Model, Msg(..), init, inputToRows, isValidInput, main, update, view)
+module Main exposing (init, inputView, main, tableColumns, tableView, update, view)
 
 import Browser
 import Html exposing (Html, div, h1, table, td, text, textarea, tr)
 import Html.Attributes exposing (class, value)
 import Html.Events exposing (onInput)
+import Types
+    exposing
+        ( Model
+        , Msg(..)
+        , TableRow
+        , UserInput
+        , UserInputErr
+        )
+import UserInputToTable
 
 
 main =
@@ -16,16 +25,14 @@ main =
 
 init : Model
 init =
-    "| one | two |\n| three | four |"
+    case UserInputToTable.convert "| one | two |\n|-----|-----|\n| three | four |" of
+        Ok tableRows ->
+            { userInput = "| one | two |\n|-----|-----|\n| three | four |"
+            , tableRows = tableRows
+            }
 
-
-type Msg
-    = NoOp
-    | Input String
-
-
-type alias Model =
-    String
+        Err _ ->
+            { userInput = "", tableRows = [] }
 
 
 update : Msg -> Model -> Model
@@ -34,8 +41,15 @@ update msg model =
         NoOp ->
             model
 
-        Input str ->
-            str
+        Input userInput ->
+            case UserInputToTable.convert userInput of
+                Ok tableRows ->
+                    { userInput = userInput
+                    , tableRows = tableRows
+                    }
+
+                Err _ ->
+                    { model | userInput = userInput }
 
 
 view : Model -> Html Msg
@@ -50,16 +64,12 @@ view model =
         , div
             [ class "table-container"
             ]
-            [ table [] (tableRows (inputToRows model))
+            [ tableView model.tableRows
             ]
         , div
             [ class "input-container"
             ]
-            [ textarea
-                [ value model
-                , onInput Input
-                ]
-                []
+            [ inputView model.userInput
             ]
         , div
             [ class "footer"
@@ -69,36 +79,34 @@ view model =
         ]
 
 
-tableRows : List (List String) -> List (Html Msg)
-tableRows =
-    List.map (\row -> tr [] (tableColumns row))
+tableView : List TableRow -> Html Msg
+tableView tableRows =
+    table
+        []
+        (List.map (\row -> tr [] (tableColumns row)) tableRows)
 
 
-tableColumns : List String -> List (Html Msg)
+tableColumns : TableRow -> List (Html Msg)
 tableColumns =
     List.map (\column -> td [] [ text column ])
 
 
-inputToRows : Model -> List (List String)
-inputToRows model =
-    String.trim model
-        |> String.split "\n"
-        |> List.filter (String.isEmpty >> not)
-        |> List.map String.trim
-        |> List.map
-            (String.split "|"
-                >> List.filter (String.isEmpty >> not)
-                >> List.map String.trim
-            )
+inputView : UserInput -> Html Msg
+inputView userInput =
+    div
+        []
+        [ textarea
+            [ value userInput
+            , onInput Input
+            ]
+            []
+        , case UserInputToTable.convert userInput of
+            Ok _ ->
+                text ""
 
-
-isValidInput : Model -> Bool
-isValidInput model =
-    case List.head (inputToRows model) of
-        Just firstRow ->
-            inputToRows model
-                |> Debug.log "1"
-                |> List.all (\row -> List.length row == List.length firstRow)
-
-        Nothing ->
-            False
+            Err { err, lines } ->
+                div
+                    [ class "red" ]
+                    [ text (err ++ ". Lines: " ++ String.join ", " (List.map String.fromInt lines))
+                    ]
+        ]
