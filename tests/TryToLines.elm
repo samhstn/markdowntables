@@ -1,10 +1,33 @@
 module TryToLines exposing (all)
 
 import Expect
-import Fixtures exposing (userInput, userInputLines, userInputWithBlankLine, userInputWithTrailingLineSpace)
+import Fixtures exposing (userInput, userInputLines)
 import Test exposing (..)
-import Types exposing (UserInputErr)
+import Types exposing (UserInput, UserInputErr)
 import UserInputToTable exposing (tryToLines)
+
+
+userInputWithBlankLine : UserInput
+userInputWithBlankLine =
+    """
+| one   | two  |              |   |   |
+|-------|------|--------------|---|---|
+
+| three | four |              |   |   |
+| five  | six  | ajskdflasjdf |   |   |
+|       |      |              |   |   |
+"""
+
+
+userInputWithTrailingLineSpace : UserInput
+userInputWithTrailingLineSpace =
+    """
+| one   | two  |              |   |   |
+|-------|------|--------------|---|---|
+| three | four |              |   |   |
+ | five  | six  | ajskdflasjdf |   |   |
+|       |      |              |   |   |
+"""
 
 
 all : Test

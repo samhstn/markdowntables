@@ -7,7 +7,6 @@ import Types exposing (TableRow, UserInput, UserInputErr)
 import UserInputToTable
 
 
--- todo
 invalidUserInputs : List ( UserInput, UserInputErr )
 invalidUserInputs =
     [ ( "| ", { err = "trailing spaces", lines = [ 1 ] } )

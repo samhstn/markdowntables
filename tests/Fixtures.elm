@@ -1,4 +1,4 @@
-module Fixtures exposing (lotsBlankLinesUserInput, userInput, userInputLines, userInputWithBlankLine, userInputWithTrailingLineSpace, validTableRows)
+module Fixtures exposing (userInput, userInputLines, validTableRows)
 
 import Types exposing (TableRow, UserInput)
 
@@ -10,29 +10,6 @@ userInput =
 |-------|------|--------------|---|---|
 | three | four |              |   |   |
 | five  | six  | ajskdflasjdf |   |   |
-|       |      |              |   |   |
-"""
-
-
-userInputWithBlankLine : UserInput
-userInputWithBlankLine =
-    """
-| one   | two  |              |   |   |
-|-------|------|--------------|---|---|
-
-| three | four |              |   |   |
-| five  | six  | ajskdflasjdf |   |   |
-|       |      |              |   |   |
-"""
-
-
-userInputWithTrailingLineSpace : UserInput
-userInputWithTrailingLineSpace =
-    """
-| one   | two  |              |   |   |
-|-------|------|--------------|---|---|
-| three | four |              |   |   |
- | five  | six  | ajskdflasjdf |   |   |
 |       |      |              |   |   |
 """
 
@@ -50,25 +27,7 @@ userInputLines =
 validTableRows : List TableRow
 validTableRows =
     [ [ "one", "two", "", "", "" ]
-    , [ "-------", "------", "--------------", "---", "---" ]
     , [ "three", "four", "", "", "" ]
     , [ "five", "six", "ajskdflasjdf", "", "" ]
     , [ "", "", "", "", "" ]
     ]
-
-
-lotsBlankLinesUserInput : UserInput
-lotsBlankLinesUserInput =
-    """
-
-
-| one   | two  |              |   |   |
-|-------|------|--------------|---|---|
-| three | four |              |   |   |
-| five  | six  | ajskdflasjdf |   |   |
-|       |      |              |   |   |
-
-
-
-
-"""

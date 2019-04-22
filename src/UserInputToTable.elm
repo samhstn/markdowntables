@@ -1,4 +1,4 @@
-module UserInputToTable exposing (checkBlankLines, checkTrimmableLines, convert, countLines, tryToColumns, tryToLines, tryTrimInput)
+module UserInputToTable exposing (checkBlankLines, checkCorrectColumnLengths, checkCorrectColumnNumbers, checkTrimmableLines, convert, countColumns, countLines, noWrappingBars, tryRemoveHeaderSeparator, tryRemoveSurroundingBars, tryToColumns, tryToLines, tryTrimInput)
 
 import Types exposing (TableRow, UserInput, UserInputErr)
 
@@ -6,6 +6,11 @@ import Types exposing (TableRow, UserInput, UserInputErr)
 countLines : String -> Int
 countLines =
     String.lines >> List.length
+
+
+countColumns : String -> Int
+countColumns =
+    String.split "|" >> List.length
 
 
 tryTrimInput : UserInput -> Result UserInputErr String
@@ -82,22 +87,6 @@ checkTrimmableLines result =
             Err e
 
 
-
--- todo
-
-
-tryRemoveHeaderSeparator :
-    Result UserInputErr (List String)
-    -> Result UserInputErr (List String)
-tryRemoveHeaderSeparator result =
-    case result of
-        Ok userInput ->
-            Ok userInput
-
-        Err e ->
-            Err e
-
-
 tryToLines :
     Result UserInputErr String
     -> Result UserInputErr (List String)
@@ -107,7 +96,6 @@ tryToLines result =
             String.lines userInput
                 |> checkBlankLines
                 |> checkTrimmableLines
-                |> tryRemoveHeaderSeparator
 
         Err e ->
             Err e
@@ -133,17 +121,79 @@ tryRemoveSurroundingBars lines =
         Err { err = "lines should start and end with a |", lines = invalidLines }
 
 
+checkCorrectColumnNumbers :
+    Result UserInputErr (List String)
+    -> Result UserInputErr (List String)
+checkCorrectColumnNumbers result =
+    case result of
+        Ok lines ->
+            case List.head lines of
+                Just headLine ->
+                    let
+                        invalidColumnNumberLines =
+                            List.indexedMap Tuple.pair lines
+                                |> List.filter (\( _, line ) -> countColumns headLine /= countColumns line)
+                                |> List.map Tuple.first
+                    in
+                    if List.isEmpty invalidColumnNumberLines then
+                        Ok lines
 
--- todo
+                    else
+                        Err { err = "invalid number of columns compared to table header", lines = invalidColumnNumberLines }
+
+                Nothing ->
+                    Err { err = "you need a table header", lines = [ 0 ] }
+
+        Err e ->
+            Err e
+
+
+tryRemoveHeaderSeparator :
+    Result UserInputErr (List TableRow)
+    -> Result UserInputErr (List TableRow)
+tryRemoveHeaderSeparator result =
+    case result of
+        Ok tableRows ->
+            case List.head (List.drop 1 tableRows) of
+                Just headerSeparatorRow ->
+                    if List.all (String.all (\char -> char == '-')) headerSeparatorRow then
+                        List.indexedMap Tuple.pair tableRows
+                            |> List.filter (\( i, _ ) -> i /= 1)
+                            |> List.map Tuple.second
+                            |> Ok
+
+                    else
+                        Err { err = "header separator row should only contain - characters", lines = [ 1 ] }
+
+                Nothing ->
+                    Err { err = "you need to provide a table separator row", lines = [ 1 ] }
+
+        Err e ->
+            Err e
 
 
 checkCorrectColumnLengths :
-    Result UserInputErr (List (List String))
-    -> Result UserInputErr (List (List String))
+    Result UserInputErr (List TableRow)
+    -> Result UserInputErr (List TableRow)
 checkCorrectColumnLengths result =
     case result of
         Ok tableRows ->
-            Ok tableRows
+            case List.head tableRows of
+                Just headLine ->
+                    let
+                        invalidColumnLengths =
+                            List.indexedMap Tuple.pair tableRows
+                                |> List.filter (\( _, tableRow ) -> List.map String.length tableRow /= List.map String.length headLine)
+                                |> List.map Tuple.first
+                    in
+                    if List.isEmpty invalidColumnLengths then
+                        Ok tableRows
+
+                    else
+                        Err { err = "invalid column length", lines = invalidColumnLengths }
+
+                Nothing ->
+                    Err { err = "you need a table header", lines = [ 0 ] }
 
         Err e ->
             Err e
@@ -156,8 +206,10 @@ tryToColumns result =
     case result of
         Ok lines ->
             tryRemoveSurroundingBars lines
+                |> checkCorrectColumnNumbers
                 |> Result.map (List.map (String.split "|"))
                 |> checkCorrectColumnLengths
+                |> tryRemoveHeaderSeparator
                 |> Result.map (List.map (List.map String.trim))
 
         Err e ->

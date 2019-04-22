@@ -1,9 +1,27 @@
 module TryTrimInput exposing (all)
 
 import Expect
-import Fixtures exposing (lotsBlankLinesUserInput, userInput)
+import Fixtures exposing (userInput)
 import Test exposing (..)
+import Types exposing (UserInput)
 import UserInputToTable exposing (tryTrimInput)
+
+
+lotsBlankLinesUserInput : UserInput
+lotsBlankLinesUserInput =
+    """
+
+
+| one   | two  |              |   |   |
+|-------|------|--------------|---|---|
+| three | four |              |   |   |
+| five  | six  | ajskdflasjdf |   |   |
+|       |      |              |   |   |
+
+
+
+
+"""
 
 
 all : Test
