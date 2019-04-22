@@ -49,7 +49,7 @@ body {
 }
 
 table,
-textarea {
+.input-container > div {
   height: 60%;
   width: 60%;
 }
@@ -68,9 +68,11 @@ textarea:focus {
 }
 
 textarea {
+  height: 100%;
+  width: 100%;
 }
 
-.input-container > textarea,
+.input-container > div,
 .table-container > table,
 .header > h1,
 .footer > div {
