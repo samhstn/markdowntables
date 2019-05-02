@@ -1,6 +1,16 @@
-module UserInputToTable exposing (checkBlankLines, checkCorrectColumnLengths, checkCorrectColumnNumbers, checkTrimmableLines, convert, countColumns, countLines, noWrappingBars, tryRemoveHeaderSeparator, tryRemoveSurroundingBars, tryToColumns, tryToLines, tryTrimInput)
+module UserInputToTable exposing (checkBlankLines, checkCorrectColumnLengths, checkCorrectColumnNumbers, checkTrimmableLines, convert, countColumns, countLines, errors, noWrappingBars, tryRemoveHeaderSeparator, tryRemoveSurroundingBars, tryToColumns, tryToLines, tryTrimInput)
 
 import Types exposing (TableRow, UserInput, UserInputErr)
+
+
+errors : UserInput -> Maybe UserInputErr
+errors userInput =
+    case convert userInput of
+        Ok _ ->
+            Nothing
+
+        Err e ->
+            Just e
 
 
 countLines : String -> Int
