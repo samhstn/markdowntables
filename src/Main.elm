@@ -2,7 +2,7 @@ module Main exposing (init, inputView, main, tableColumns, tableView, update, vi
 
 import Browser
 import Html exposing (Html, div, h1, table, td, text, textarea, tr)
-import Html.Attributes exposing (class, value)
+import Html.Attributes exposing (class, style, value)
 import Html.Events exposing (onInput)
 import Types
     exposing
@@ -23,16 +23,18 @@ main =
         }
 
 
+initialUserInput : String
+initialUserInput =
+    "| one   | two  |\n|-------|------|\n| three | four |"
+
+
 init : Model
 init =
-    case UserInputToTable.convert "| one | two |\n|-----|-----|\n| three | four |" of
-        Ok tableRows ->
-            { userInput = "| one | two |\n|-----|-----|\n| three | four |"
-            , tableRows = tableRows
-            }
-
-        Err _ ->
-            { userInput = "", tableRows = [] }
+    update
+        (Input initialUserInput)
+        { userInput = initialUserInput
+        , tableRows = []
+        }
 
 
 update : Msg -> Model -> Model
@@ -53,7 +55,7 @@ update msg model =
 
 
 view : Model -> Html Msg
-view model =
+view ({ userInput } as model) =
     div
         [ class "container" ]
         [ div
@@ -62,6 +64,10 @@ view model =
             [ h1 [] [ text "Table Converter" ]
             ]
         , div
+            [ class "top-panel"
+            ]
+            []
+        , div
             [ class "table-container"
             ]
             [ tableView model.tableRows
@@ -69,8 +75,12 @@ view model =
         , div
             [ class "input-container"
             ]
-            [ inputView model.userInput
+            [ inputView userInput (UserInputToTable.errors userInput)
             ]
+        , div
+            [ class "bottom-panel"
+            ]
+            []
         , div
             [ class "footer"
             ]
@@ -91,22 +101,44 @@ tableColumns =
     List.map (\column -> td [] [ text column ])
 
 
-inputView : UserInput -> Html Msg
-inputView userInput =
+inputView : UserInput -> Maybe UserInputErr -> Html Msg
+inputView userInput userInputErr =
     div
-        []
-        [ textarea
+        [ class "textarea-container"
+        ]
+        [ div
+            [ class "textarea-backdrop"
+            ]
+            [ div
+                [ class "textarea-highlights"
+                ]
+                (case userInputErr of
+                    Just { lines } ->
+                        List.map
+                            (\line ->
+                                div
+                                    [ class "textarea-highlight"
+                                    , style "top" (String.fromInt (line - 1) ++ "rem")
+                                    ]
+                                    []
+                            )
+                            lines
+
+                    Nothing ->
+                        []
+                )
+            ]
+        , textarea
             [ value userInput
             , onInput Input
             ]
             []
-        , case UserInputToTable.convert userInput of
-            Ok _ ->
-                text ""
-
-            Err { err, lines } ->
+        , case userInputErr of
+            Just { err } ->
                 div
                     [ class "red" ]
-                    [ text (err ++ ". Lines: " ++ String.join ", " (List.map String.fromInt lines))
-                    ]
+                    [ text err ]
+
+            Nothing ->
+                text ""
         ]
