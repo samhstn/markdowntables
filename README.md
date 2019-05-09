@@ -35,3 +35,7 @@ until [ "$(curl -s https://samhstn.github.io/markdowntables/version)" = "$(git r
   sleep 5
 done
 ```
+
+# AWS Setup
+
+Checkout the [infra](./infra) documentation for guidance.

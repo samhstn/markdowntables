@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  CloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - markdowntables.com
+        CacheBehaviors:
+          - DefaultTTL: 31622400
+            MaxTTL: 31622400
+            MinTTL: 31622400
+            PathPattern: "*.min.css"
+            ForwardedValues:
+              QueryString: false
+            CachedMethods:
+              - GET
+              - HEAD
+            AllowedMethods:
+              - GET
+              - HEAD
+            ViewerProtocolPolicy: allow-all
+            Compress: true
+            TargetOriginId: MdtOrigin
+          - DefaultTTL: 31622400
+            MaxTTL: 31622400
+            MinTTL: 31622400
+            PathPattern: "*.min.js"
+            ForwardedValues:
+              QueryString: false
+            CachedMethods:
+              - GET
+              - HEAD
+            AllowedMethods:
+              - GET
+              - HEAD
+            ViewerProtocolPolicy: allow-all
+            Compress: true
+            TargetOriginId: MdtOrigin
+        Origins:
+          - DomainName: samhstn.github.io
+            OriginPath: /markdowntables
+            Id: MdtOrigin
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          ForwardedValues:
+            QueryString: true
+          Compress: true
+          ViewerProtocolPolicy: redirect-to-https
+          TargetOriginId: MdtOrigin
+        Enabled: true
+        PriceClass: PriceClass_All
+        ViewerCertificate:
+          AcmCertificateArn: !ImportValue MdtCertificateArn
+          SslSupportMethod: sni-only
+
+Outputs:
+  CloudFrontDomainName:
+    Value: !GetAtt CloudFront.DomainName
+    Export:
+      Name: MdtCloudFrontDomainName

@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: markdowntables.com
+      SubjectAlternativeNames:
+        - "*.markdowntables.com"
+      ValidationMethod: DNS
+
+Outputs:
+  CertificateArn:
+    Value: !Ref Certificate
+    Export:
+      Name: MdtCertificateArn

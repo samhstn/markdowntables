@@ -1,4 +1,4 @@
 node_modules
 elm-stuff
 src/elm.js
-public/index.js
+public/*
