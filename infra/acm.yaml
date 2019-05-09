@@ -4,11 +4,13 @@ Resources:
   Certificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: "*.markdowntables.com"
+      DomainName: markdowntables.com
+      SubjectAlternativeNames:
+        - "*.markdowntables.com"
       ValidationMethod: DNS
 
 Outputs:
-  AcmCertArn:
+  CertificateArn:
     Value: !Ref Certificate
     Export:
-      Name: MdtAcmCertArn
+      Name: MdtCertificateArn

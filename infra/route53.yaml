@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  Route53RecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties: 
+      Name: markdowntables.com
+      Type: A
+      HostedZoneName: markdowntables.com.
+      AliasTarget:
+        DNSName: !ImportValue MdtCloudFrontDomainName
+        HostedZoneId: Z2FDTNDATAQYW2 # default HostedZoneId for Cloudfront
+
+  Route53WWWRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties: 
+      Name: www.markdowntables.com
+      Type: A
+      HostedZoneName: markdowntables.com.
+      AliasTarget:
+        DNSName: s3-website-us-east-1.amazonaws.com
+        HostedZoneId: Z3AQBSTGFYJSTF # default HostedZoneId for S3
