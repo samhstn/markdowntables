@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/samhstn/markdowntables.svg?branch=master)](https://travis-ci.org/samhstn/markdowntables)
+
 # [Markdown Tables](http://markdowntables.com)
 
 Create, Edit and Format your markdown tables.

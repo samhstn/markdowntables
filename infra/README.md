@@ -42,4 +42,5 @@ aws cloudformation wait stack-create-complete --stack-name mdt-s3
 
 ```bash
 aws cloudformation create-stack --stack-name mdt-route53 --template-body file://infra/route53.yaml
+aws cloudformation wait stack-create-complete --stack-name mdt-route53
 ```
