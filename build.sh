@@ -15,8 +15,13 @@ browserify src/index.js |
 uglifyjs --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' |
 uglifyjs --mangle --output=public/index.js
 
-JS_FILENAME="index-$(md5 -q public/index.js).min.js"
-CSS_FILENAME="index-$(md5 -q src/index.css).min.css"
+if [ $CI = "true" ];then
+  JS_FILENAME="index-$(md5sum public/index.js | awk '{ print $1 }').min.js"
+  CSS_FILENAME="index-$(md5sum src/index.css | awk '{ print $1 }').min.css"
+else
+  JS_FILENAME="index-$(md5 -q public/index.js).min.js"
+  CSS_FILENAME="index-$(md5 -q src/index.css).min.css"
+fi
 
 cp public/index.js public/$JS_FILENAME
 cp src/index.css public/$CSS_FILENAME
