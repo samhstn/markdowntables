@@ -1,0 +1,134 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-size: 14px;
+  font-family:
+      -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.header,
+.footer,
+.table-container,
+.input-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.header {
+  grid-area: header;
+}
+
+.footer {
+  grid-area: footer;
+}
+
+.table-container, {
+  grid-area: table;
+}
+
+.input-container {
+  grid-area: input;
+}
+
+.top-panel {
+  grid-area: above;
+}
+
+.bottom-panel {
+  grid-area: below;
+}
+
+.container {
+  height: 100%;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: 1fr 4% 1fr;
+  grid-template-rows: 1fr 2fr 4fr 2fr 1fr;
+  grid-template-areas:
+    "header header header"
+    "above above above"
+    "table . input"
+    "below below below"
+    "footer footer footer";
+}
+
+table,
+.input-container > .textarea-container {
+  height: 100%;
+  width: 70%;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  border: 1px solid grey;
+}
+
+textarea:focus {
+  outline-width: 0;
+  outline: none;
+}
+
+textarea {
+  height: 100%;
+  width: 100%;
+  font-family: 'Source Code Pro', Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 1rem;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+  color: #444;
+  background-color: transparent;
+  line-height: 1rem;
+  position: absolute;
+  left: 0;
+}
+
+.textarea-container {
+  position: relative;
+  border: 1px solid lightgray;
+}
+
+.textarea-backdrop {
+  overflow: auto;
+  background-color: #fff;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.textarea-highlights {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: transparent;
+  height: 100%;
+}
+
+.textarea-highlight {
+  color: transparent;
+  background-color: #d4e9ab;
+  width: 100%;
+  height: 1rem;
+  position: absolute;
+}
+
+.input-container > .textarea-container,
+.table-container > table,
+.header > h1,
+.footer > div {
+  margin: auto;
+}
+
+.red {
+  color: red;
+}
