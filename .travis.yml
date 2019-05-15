@@ -2,6 +2,7 @@ language: elm
 script:
   - npm run format:validate
   - npm test
+cache: npm
 after_success:
   - ./build.sh
   - git rev-parse HEAD > public/version
